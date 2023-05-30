@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.staticfile.org/vue/2.7.0/vue.min.js"></script>
+    <style>
+      .navBox {
+        width: 500px;
+        height: 500px;
+        border: 1px solid black;
+      }
+      .navHaed {
+        height: 40px;
+        background-color: pink;
+        display: flex;
+        justify-content: space-around;
+      }
+      .navContent1 {
+        width: 400px;
+        height: 300px;
+        border: 1px solid black;
+        margin: 20px auto;
+      }
+      table{
+        width: 100%;
+        border-collapse: collapse;
+      }
+      td{
+        height:  40px;
+      }
+      thead td{
+        text-align: center;
+      }
+      thead{
+        background-image: linear-gradient(to left,#74b7a9,#eb7e91ab);
+      }
+      .btnBox{
+      padding-top: 20px;
+      }
+      .color{
+        background-color: #74b7a9 !important;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="navBox">
+        <div class="navHaed">
+          <button @click="navtab(1)">新闻</button>
+          <button @click="navtab(2)">军事</button>
+          <button @click="navtab(3)">娱乐</button>
+        </div>
+        <div class="navContent1">
+          <p v-show="tab==1">我是新闻</p>
+          <p v-show="tab==2">我是军事内容</p>
+          <p v-show="tab==3">我是娱乐内容</p>
+        </div>
+      </div>
+     <hr>
+      <table border="1px">
+            <thead>
+                <tr>
+                    <td>#</td>
+                    <td>姓名</td>
+                    <td>连接</td>
+                    <td>描述</td>
+                    <td>操作</td>
+
+                </tr> 
+            </thead>
+            <tbody>
+                <tr v-for="(item,index) in arr" :style="index%2==1?'background-color:#ccc':'background-color:#aaa'" @mouseenter="moveUp(index)"  
+                v-bind:class="index==indexs?'color':''" 
+                >
+                    <td>{{item.num}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.href}}</td>
+                    <td>{{item.describe}}</td>
+                    <td>
+                        <button @click="del(index)" name="del">删除</button>
+                        <button @click="okAdd(index)" name="modify" >修改</button>
+                    </td>
+                </tr>
+            </tbody>
+      </table>
+      <div class="btnBox">
+        <button @click="add()">{{str}}</button>
+        
+         <input type="text" placeholder="请输入名称"  v-model="uersName">
+        <input type="text" placeholder="请输入网站连接"  v-model="hrefs">
+        <input type="text" placeholder="请输入描述内容" v-model="centent">
+        <button @click="search()">查看</button><input type="text" placeholder="输入查看内容" v-model="searchs">
+       
+      </div>
+     
+    </div>
+    <script>
+      let vm = new Vue({
+        el: "#root",
+        data() {
+          return {
+            indexs:-1,//鼠标以上切换颜色
+            index:0,
+            str:'新增',
+            uersName:'',
+            hrefs:'',
+            centent:"",
+            searchs:'',
+            tab: 1,
+            arr:[
+                {num:1,name:'哔哩哔哩',href:'https://www.bilibili.com/',describe:'bilibili'},
+                {num:2,name:'今日头条',href:'https://www.toutiao.com/',describe:'bytedance'},
+                {num:3,name:'百度',href:'https://www.baidu.com/',describe:'baidu'},
+                {num:4,name:'新浪微博',href:'https://weibo.com/',describe:'weibo'},
+                {num:5,name:'腾讯网',href:'https://www.qq.com/',describe:'tencent'},   
+           ]
+        
+          };
+        },
+        methods: {
+          navtab(n) {
+            if (n == 1) {
+              this.tab = 1;
+            } else if (n == 2) {
+              this.tab = 2;
+            } else if (n == 3) {
+              this.tab = 3;
+            }
+          },
+          add(){ //新增
+            if(this.str=='新增'){
+                let n=this.arr[this.arr.length-1].num
+            n++
+            let data={
+                num:n,
+                name:this.uersName,
+                href:this.hrefs,
+                describe:this.centent,   
+            }
+            console.log(data);
+            this.arr.push(data);
+            //新增后清楚数据
+            this.uersName=''
+            this.hrefs=''
+            this.centent=''
+            }else {
+                 this.arr[this.index].name=this.uersName
+                 this.arr[this.index].href=this.hrefs
+                 this.arr[this.index].describe=this.centent
+                 this.str='新增'
+                 //修改之后清除数据
+              this.uersName='',
+              this.hrefs='',
+              this.centent=''
+            }
+           
+        },
+        del(index){ //删除
+            if(confirm('确认删除吗???')){
+                this.arr.splice(index,1)
+            }
+        },
+        okAdd(index){ //修改按钮    
+          this.uersName=this.arr[index].name
+          this.hrefs=this.arr[index].href
+          this.centent=this.arr[index].describe
+          this.str='修改'
+          this.index=index
+  
+        },search(){//搜索
+            this.arr= this.arr.filter((item,index)=>{
+                if(item.name.includes(this.searchs)||item.href.includes(this.searchs)||item.describe.includes(this.searchs)){
+                     return item
+                }
+            })  
+        },
+        moveUp(index){
+         this.indexs=index
+       
+        }
+     
+        },
+       
+      
+      });
+
+    </script>
+  </body>
+</html>
